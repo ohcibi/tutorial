@@ -1,7 +1,9 @@
 import { belongsTo, createServer, hasMany, Model } from "miragejs";
 
-export default function () {
-  createServer({
+export default function (environment = "development") {
+  return createServer({
+    environment,
+
     models: {
       list: Model.extend({
         reminders: hasMany(),
@@ -9,7 +11,7 @@ export default function () {
 
       reminder: Model.extend({
         list: belongsTo("list", { inverse: "reminders" }),
-        otherFk: belongsTo("list", { inverse: null })
+        otherFk: belongsTo("list", { inverse: null }),
       }),
     },
 
