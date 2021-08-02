@@ -31,9 +31,6 @@ test("it should not include reminders from other lists", async () => {
     text: "Reminder Two"
   });
 
-  visit("/1");
-  await waitForElementToBeRemoved(() => screen.getByText("Loading..."));
-
-  expect(screen.getByText("Reminder One")).toBeInTheDocument();
-  expect(screen.queryByText("Reminder Two")).not.toBeInTheDocument();
+  expect(listOne.reminders.length).toEqual(1);
+  expect(listTwo.reminders.length).toEqual(1);
 });
