@@ -6,7 +6,10 @@ export default function (environment = "development") {
 
     models: {
       list: Model.extend({
+        // this doesn't work as expected
         reminders: hasMany(),
+        // but this does
+        // reminders: hasMany("reminder", { inverse: "list"}),
       }),
 
       reminder: Model.extend({
@@ -19,20 +22,16 @@ export default function (environment = "development") {
       const homeList = server.create("list", { name: "Home" });
       const workList = server.create("list", { name: "Work" });
 
-      server.create("reminder", { list: homeList, text: "Walk the dog" });
-      server.create("reminder", { list: homeList, text: "Take out the trash" });
-      server.create("reminder", { list: homeList, text: "Work out" });
-
       server.create("reminder", {
-        list: workList,
-        otherFk: homeList,
-        text: "Figure out multiple FKs to the same model"
+        list: homeList,
+        otherFk: workList,
+        text: "Walk the dog",
       });
 
       server.create("reminder", {
         list: workList,
         otherFk: homeList,
-        text: "Review design doc"
+        text: "Figure out multiple FKs to the same model",
       });
     },
 
@@ -61,10 +60,10 @@ export default function (environment = "development") {
         const listId = request.params.id;
         const list = schema.lists.find(listId);
 
-        // list.reminders contains reminders for both lists, where either listId or otherFkId match the list's id.
+        // this surprisingly returns both reminders for both list IDs
         return list.reminders;
 
-        // this works as expected though
+        // this returns nothing for list 1 (homeList) and both reminders for list 2 (workList)
         // return schema.reminders.where({ listId });
       })
     },
