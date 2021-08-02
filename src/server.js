@@ -4,31 +4,28 @@ export default function (environment = "development") {
   return createServer({
     environment,
 
-    models: {
-      list: Model.extend({
-        // this doesn't work as expected
-        reminders: hasMany(),
-        // but this does
-        // reminders: hasMany("reminder", { inverse: "list"}),
-      }),
+  models: {
+    user: Model.extend({
+      blogPosts: hasMany(),
+    }),
 
-      reminder: Model.extend({
-        list: belongsTo("list", { inverse: "reminders" }),
-        otherFk: belongsTo("list", { inverse: null }),
-      }),
-    },
+    blogPost: Model.extend({
+      author: belongsTo("user", { inverse: "blogPosts" }),
+      reviewer: belongsTo("user", { inverse: null }),
+    }),
+  },
 
     seeds(server) {
-      const homeList = server.create("list", { name: "Home" });
-      const workList = server.create("list", { name: "Work" });
+      const homeList = server.create("user", { name: "Home" });
+      const workList = server.create("user", { name: "Work" });
 
-      server.create("reminder", {
+      server.create("blog-post", {
         list: homeList,
         otherFk: workList,
         text: "Walk the dog",
       });
 
-      server.create("reminder", {
+      server.create("blog-post", {
         list: workList,
         otherFk: homeList,
         text: "Figure out multiple FKs to the same model",
